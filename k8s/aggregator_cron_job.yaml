@@ -11,6 +11,13 @@ spec:
           containers:
             - name: aggregator-service
               image: us-central1-docker.pkg.dev/moon-insurance/moon-insurance/aggregator-service:latest
+                 resources:
+              requests:
+                cpu: "100m"  # Reduce this value (100m = 0.1 CPU)
+                memory: "128Mi"
+              limits:
+                cpu: "500m"
+                memory: "256Mi"
               env:
                 - name: DATABASE_URL
                   valueFrom:
