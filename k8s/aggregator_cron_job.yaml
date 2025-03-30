@@ -22,11 +22,11 @@ spec:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
-                      name: db-secrets
+                      name: aggregator-service-db-secret
                       key: DATABASE_URL
                 - name: REDSHIFT_URL
                   valueFrom:
                     secretKeyRef:
-                      name: db-secrets
+                      name: aggregator-service-redshift-secret
                       key: REDSHIFT_URL
           restartPolicy: OnFailure
