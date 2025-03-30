@@ -26,4 +26,3 @@ jobs:
       REDSHIFT_PASSWORD: ${{ secrets.REDSHIFT_PASSWORD }}
       REDSHIFT_ENDPOINT: ${{ secrets.REDSHIFT_ENDPOINT }}
       REDSHIFT_DATABASE: ${{ secrets.REDSHIFT_DATABASE }}
-## testing
