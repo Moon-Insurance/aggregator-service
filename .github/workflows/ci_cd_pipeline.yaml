@@ -1,0 +1,29 @@
+name: CI/CD for Aggregator Service # Name of the pipeline
+
+on:
+  push:
+    branches:
+      - master # branch to trigger the pipeline
+    paths:
+      - "**" # path to trigger the pipeline
+
+jobs:
+  call-pipeline:
+    uses: Moon-Insurance/main-service/.github/workflows/ci_c_pipeline.yaml@main # Path to the reusable workflow
+    with:
+      service_name: "aggregator-service" #product servce
+      aggregator_service: true # Aggregator service flag
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }} # GCP service account key
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+      GKE_REGION: ${{ secrets.GKE_REGION }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_ENDPOINT: ${{ secrets.DATABASE_ENDPOINT }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      REDSHIFT_USER: ${{ secrets.REDSHIFT_USER }}
+      REDSHIFT_PASSWORD: ${{ secrets.REDSHIFT_PASSWORD }}
+      REDSHIFT_ENDPOINT: ${{ secrets.REDSHIFT_ENDPOINT }}
+      REDSHIFT_DATABASE: ${{ secrets.REDSHIFT_DATABASE }}
+## testing
