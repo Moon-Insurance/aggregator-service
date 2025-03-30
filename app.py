@@ -154,7 +154,6 @@ def aggregate_sales_data():
 
     print("Data aggregation completed and saved to Redshift successfully!")
 
-# --- Flask Route ---
 @app.route('/')
 def index():
     try:

@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: aggregator-cronjob
 spec:
-  schedule: "0 0 * * 1" # Runs every Monday at midnight
+  schedule: "0 0 * * 1" # Runs evry Monday at midnight
   jobTemplate:
     spec:
       template:
