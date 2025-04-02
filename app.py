@@ -32,13 +32,15 @@ postgres_url = URL.create(
 # Amazon Redshift (Target) connection URL
 redshift_url = URL.create(
     drivername="redshift+redshift_connector",
-    host=parsed_redshift.hostname,
-    port=parsed_redshift.port or "5439",
-    database=parsed_redshift.path.lstrip("/"),
-    username=parsed_redshift.username,
-    password=parsed_redshift.password
-)
+    host=os.getenv("REDSHIFT_HOST"),
+    port=int(os.getenv("REDSHIFT_PORT") or "5439"),
+    database=os.getenv("REDSHIFT_DB"),
+    username=os.getenv("REDSHIFT_USER"),
+    password=os.getenv("REDSHIFT_PASSWORD"))
 
+
+print("PostgreSQL URL:", postgres_url)
+print("Redshift URL:", redshift_url)
 # --- Create Engines ---
 # Engine for the PostgreSQL source
 pg_engine = sa.create_engine(
@@ -47,7 +49,8 @@ pg_engine = sa.create_engine(
     pool_timeout=100,
     pool_recycle=900,
     max_overflow=5,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    echo=True
 )
 
 # Engine for the Amazon Redshift target
@@ -74,18 +77,10 @@ db = SQLAlchemy(app)
 
 # --- Data Aggregation Function ---
 def aggregate_sales_data():
+    print("Aggregating sales data from PostgreSQL and saving to Redshift...")   
     # Use SQLAlchemy connections for both source and target.
     with pg_engine.connect() as pg_conn, rs_engine.begin() as rs_conn: 
     # Ensure the best_sales_teams table exists
-        create_table_sql = sa.text("""
-            CREATE TABLE IF NOT EXISTS best_sales_teams (
-                branch VARCHAR(255),
-                total_sales INTEGER,
-                total_revenue NUMERIC(18, 2)
-            );
-        """)
-        rs_conn.execute(create_table_sql)
-        
         # 1. Best Performing Sales Teams
         query_top_teams = sa.text("""
             SELECT a.branch, COUNT(*) AS total_sales, SUM(s.amount) AS total_revenue
