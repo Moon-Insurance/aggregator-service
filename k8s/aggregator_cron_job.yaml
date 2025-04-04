@@ -25,19 +25,30 @@ spec:
                       name: aggregator-service-db-secret
                       key: DATABASE_URL
 
-                - name: REDSHIFT_URL
+                - name: REDSHIFT_USER
                   valueFrom:
                     secretKeyRef:
                       name: aggregator-service-redshift-secret
-                      key: REDSHIFT_URL
+                      key: REDSHIFT_USER
+                - name: REDSHIFT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: aggregator-service-redshift-secret
+                      key: REDSHIFT_PASSWORD
+                - name: REDSHIFT_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: aggregator-service-redshift-secret
+                      key: REDSHIFT_ENDPOINT
+                - name: REDSHIFT_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: aggregator-service-redshift-secret
+                      key: REDSHIFT_PORT
+                - name: REDSHIFT_DB
+                  valueFrom:
+                    secretKeyRef:
+                      name: aggregator-service-redshift-secret
+                      key: REDSHIFT_DB
 
-                  volumeMounts:
-                    - name: ssh-key
-                      mountPath: "/root/.ssh"
-                      readOnly: true
-
-          volumes:
-            - name: ssh-key
-              secret:
-                secretName: ssh-key
           restartPolicy: OnFailure
