@@ -83,10 +83,10 @@ def aggregate_sales_data():
     # Ensure the best_sales_teams table exists
         # 1. Best Performing Sales Teams
         query_top_teams = sa.text("""
-            SELECT a.branch, COUNT(*) AS total_sales, SUM(s.amount) AS total_revenue
+            SELECT a.branch, COUNT(*) AS total_sales, SUM(s.amount) AS total_revenue , a.name AS agent_name
             FROM sale s
             JOIN agent a ON s.agent_id = a.agent_id
-            GROUP BY a.branch
+            GROUP BY a.name,a.branch
             ORDER BY total_revenue DESC
             LIMIT 5;
         """)
@@ -94,13 +94,13 @@ def aggregate_sales_data():
 
         # Clear destination table
         rs_conn.execute(sa.text("DELETE FROM best_sales_teams;"))
-        for branch, total_sales, total_revenue in top_teams:
+        for branch, total_sales, total_revenue,agent_name in top_teams:
             rs_conn.execute(
                 sa.text("""
-                    INSERT INTO best_sales_teams (branch, total_sales, total_revenue)
-                    VALUES (:branch, :total_sales, :total_revenue);
+                    INSERT INTO best_sales_teams (branch, total_sales, total_revenue, agent_name)
+                    VALUES (:branch, :total_sales, :total_revenue, :agent_name);
                 """),
-                {'branch': branch, 'total_sales': total_sales, 'total_revenue': total_revenue}
+                {'branch': branch, 'total_sales': total_sales, 'total_revenue': total_revenue, 'agent_name': agent_name}
             )
         print("Best Performing Sales Teams aggregated.")
 
@@ -111,18 +111,17 @@ def aggregate_sales_data():
             GROUP BY s.product
             HAVING SUM(s.amount) > 1000
             ORDER BY total_sales DESC;
-
         """)
         top_products = pg_conn.execute(query_top_products).fetchall()
 
         rs_conn.execute(sa.text("DELETE FROM top_selling_products;"))
-        for product_id, product_name, total_sales in top_products:
+        for  product_name, total_sales in top_products:
             rs_conn.execute(
                 sa.text("""
-                    INSERT INTO top_selling_products (product_id, product_name, total_sales)
-                    VALUES (:product_id, :product_name, :total_sales);
+                    INSERT INTO top_selling_products (product_name, total_sales)
+                    VALUES (:product_name, :total_sales);
                 """),
-                {'product_id': product_id, 'product_name': product_name, 'total_sales': total_sales}
+                {'product_name': product_name, 'total_sales': total_sales}
             )
         print("Products achieving sales targets aggregated.")
 
