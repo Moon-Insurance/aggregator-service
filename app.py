@@ -109,7 +109,7 @@ def aggregate_sales_data():
             SELECT s.product AS product_name, SUM(s.amount) AS total_sales
             FROM sale s
             GROUP BY s.product
-            HAVING SUM(s.amount) > 10000
+            HAVING SUM(s.amount) > 1000
             ORDER BY total_sales DESC;
 
         """)
