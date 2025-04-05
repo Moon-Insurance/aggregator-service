@@ -1,5 +1,4 @@
-name: CI/CD for Aggregator Service # Name of the pipeline
-
+name: CI/CD for Aggregator Service
 on:
   push:
     branches:
