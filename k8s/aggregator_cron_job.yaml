@@ -35,11 +35,11 @@ spec:
                     secretKeyRef:
                       name: aggregator-service-redshift-secret
                       key: REDSHIFT_PASSWORD
-                - name: REDSHIFT_ENDPOINT
+                - name: REDSHIFT_HOST
                   valueFrom:
                     secretKeyRef:
                       name: aggregator-service-redshift-secret
-                      key: REDSHIFT_ENDPOINT
+                      key: REDSHIFT_HOST
                 - name: REDSHIFT_PORT
                   valueFrom:
                     secretKeyRef:
