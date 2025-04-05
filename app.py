@@ -97,8 +97,8 @@ def aggregate_sales_data():
         for branch, total_sales, total_revenue,agent_name in top_teams:
             rs_conn.execute(
                 sa.text("""
-                    INSERT INTO best_sales_teams (branch, total_sales, total_revenue, agent_name)
-                    VALUES (:branch, :total_sales, :total_revenue, :agent_name);
+                    INSERT INTO best_sales_teams (branch, total_sales, total_revenue)
+                    VALUES (:branch, :total_sales, :total_revenue);
                 """),
                 {'branch': branch, 'total_sales': total_sales, 'total_revenue': total_revenue, 'agent_name': agent_name}
             )
@@ -106,22 +106,23 @@ def aggregate_sales_data():
 
         # 2. Products Achieving Sales Targets (>10000)
         query_top_products = sa.text("""
-            SELECT s.product AS product_name, SUM(s.amount) AS total_sales
+            SELECT s.product AS product_name, SUM(s.amount) AS total_sales, a.branch AS branch
             FROM sale s
-            GROUP BY s.product
+            JOIN agent a ON s.agent_id = a.agent_id
+            GROUP BY a.branch,s.product
             HAVING SUM(s.amount) > 1000
             ORDER BY total_sales DESC;
         """)
         top_products = pg_conn.execute(query_top_products).fetchall()
 
         rs_conn.execute(sa.text("DELETE FROM top_selling_products;"))
-        for  product_name, total_sales in top_products:
+        for  product_name, total_sales ,branch in top_products:
             rs_conn.execute(
                 sa.text("""
-                    INSERT INTO top_selling_products (product_name, total_sales)
-                    VALUES (:product_name, :total_sales);
+                    INSERT INTO top_selling_products (branch, product_name, total_sales)
+                    VALUES (:branch,:product_name, :total_sales);
                 """),
-                {'product_name': product_name, 'total_sales': total_sales}
+                { 'branch': branch,'product_name': product_name, 'total_sales': total_sales}
             )
         print("Products achieving sales targets aggregated.")
 
