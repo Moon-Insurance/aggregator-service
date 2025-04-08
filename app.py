@@ -83,24 +83,24 @@ def aggregate_sales_data():
     # Ensure the best_sales_teams table exists
         # 1. Best Performing Sales Teams
         query_top_teams = sa.text("""
-            SELECT a.branch, COUNT(*) AS total_sales, SUM(s.amount) AS total_revenue , a.name AS agent_name
+            SELECT a.branch, COUNT(*) AS num_sales, SUM(s.amount) AS total_sales 
             FROM sale s
             JOIN agent a ON s.agent_id = a.agent_id
-            GROUP BY a.name,a.branch
-            ORDER BY total_revenue DESC
+            GROUP BY a.branch
+            ORDER BY total_sales DESC
             LIMIT 5;
         """)
         top_teams = pg_conn.execute(query_top_teams).fetchall()
 
         # Clear destination table
         rs_conn.execute(sa.text("DELETE FROM best_sales_teams;"))
-        for branch, total_sales, total_revenue,agent_name in top_teams:
+        for branch, num_sales, total_sales in top_teams:
             rs_conn.execute(
                 sa.text("""
-                    INSERT INTO best_sales_teams (branch, total_sales, total_revenue)
-                    VALUES (:branch, :total_sales, :total_revenue);
+                    INSERT INTO best_sales_teams (branch, num_sales, total_sales)
+                    VALUES (:branch, :num_sales, :total_sales);
                 """),
-                {'branch': branch, 'total_sales': total_sales, 'total_revenue': total_revenue, 'agent_name': agent_name}
+                {'branch': branch, 'num_sales': num_sales, 'total_sales': total_sales}
             )
         print("Best Performing Sales Teams aggregated.")
 
